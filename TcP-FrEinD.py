@@ -610,8 +610,6 @@ async def MaiiiinE():
     api_task = asyncio.create_task(start_api_server())
     await asyncio.gather(task1, task2, api_task)
     api_queue_task = asyncio.create_task(process_api_queue())
-    await asyncio.gather(task1, task2, api_task, api_queue_task)
-async def StarTinG():
     while True:
         try: await asyncio.wait_for(MaiiiinE() , timeout = 7 * 60 * 60)
         except asyncio.TimeoutError: print("Token ExpiRed ! , ResTartinG")
