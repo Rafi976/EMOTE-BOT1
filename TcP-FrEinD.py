@@ -38,20 +38,31 @@ async def api_handler(request):
 async def emote_api_handler(request):
     try:
         emoteid = request.rel_url.query.get('emoteid')
-        uid = request.rel_url.query.get('uid')
-        if not emoteid or not uid:
-            return web.json_response({'status': 'error', 'message': 'Missing emoteid or uid'}, status=400)
-        try:
-            emoteid = int(emoteid)
-            uid = int(uid)
-        except ValueError:
-            return web.json_response({'status': 'error', 'message': 'Invalid emoteid or uid'}, status=400)
-        # emulate @a command behavior
+        if not emoteid:
+            return web.json_response({'status': 'error', 'message': 'Missing emoteid'}, status=400)
+        
+        # collect up to 4 UIDs
+        uids = []
+        for i in range(1, 5):
+            uid_val = request.rel_url.query.get(f'uid{i}')
+            if uid_val:
+                try:
+                    uids.append(int(uid_val))
+                except ValueError:
+                    return web.json_response({'status': 'error', 'message': f'Invalid uid{i}'}, status=400)
+
+        if not uids:
+            return web.json_response({'status': 'error', 'message': 'No valid UID provided'}, status=400)
+
         if key is None or iv is None or region is None:
             return web.json_response({'status': 'error', 'message': 'Bot not ready'}, status=503)
-        H = await Emote_k(uid, emoteid, key, iv, region)
-        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
-        return web.json_response({'status': 'ok', 'message': f'Sent emote {emoteid} to {uid}'})
+
+        # send emote to each UID
+        for uid in uids:
+            H = await Emote_k(uid, int(emoteid), key, iv, region)
+            await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
+
+        return web.json_response({'status': 'ok', 'message': f'Sent emote {emoteid} to {uids}'})
     except Exception as e:
         return web.json_response({'status': 'error', 'message': str(e)}, status=500)
 
