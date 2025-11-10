@@ -63,10 +63,7 @@ async def emote_api_handler(request):
             await SEndPacKeT(whisper_writer, online_writer, 'OnLine', H)
 
         return web.json_response({'status': 'ok', 'message': f'Sent emote {emoteid} to {uids}'})
-    except Exception as e:
-        return web.json_response({'status': 'error', 'message': str(e)}, status=500)
-        
-        # ----------- LEAVE API (Correct Position) -----------
+    # ----------- LEAVE API (Correct Position) -----------
 async def auto_leave_api_handler(request):
     try:
         global uid, key, iv, whisper_writer, online_writer
@@ -86,7 +83,9 @@ async def auto_leave_api_handler(request):
         return web.json_response({"status": "success", "message": f"Bot (UID {uid}) left the squad"})
 
     except Exception as e:
-        return web.json_response({"status": "error", "message": str(e)}, status=500)
+        return web.json_response({'status': 'error', 'message': str(e)}, status=500)
+        
+      
 #EMOTES BY PARAHEX X CODEX
 
 async def start_api_server():
