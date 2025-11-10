@@ -69,27 +69,24 @@ async def emote_api_handler(request):
         # ----------- LEAVE API (Correct Position) -----------
 async def auto_leave_api_handler(request):
     try:
-        # Bot ready কিনা চেক
+        global uid, key, iv, whisper_writer, online_writer
+
         if key is None or iv is None:
-            return web.json_response({'status': 'error', 'message': 'Bot not ready'}, status=503)
+            return web.json_response({"status": "error", "message": "Bot not ready"}, status=503)
 
         if whisper_writer is None or online_writer is None:
-            return web.json_response({'status': 'error', 'message': 'Writers not available'}, status=503)
+            return web.json_response({"status": "error", "message": "Writers not ready"}, status=503)
 
-        # global uid (বটের নিজের UID)
-        global uid
         if uid is None:
-            return web.json_response({'status': 'error', 'message': 'Bot UID not detected yet'}, status=500)
+            return web.json_response({"status": "error", "message": "Bot UID not detected yet"}, status=500)
 
-        # Exit Packet বানানো
         leave_packet = await ExiT(uid, key, iv)
+        await SEndPacKeT(whisper_writer, online_writer, "OnLine", leave_packet)
 
-        # Send packet
-        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', leave_packet)
+        return web.json_response({"status": "success", "message": f"Bot (UID {uid}) left the squad"})
 
-        return web.json_response({'status': 'success', 'message': f'Bot (UID {uid}) left the squad'})
     except Exception as e:
-        return web.json_response({'status': 'error', 'message': str(e)}, status=500)
+        return web.json_response({"status": "error", "message": str(e)}, status=500)
 #EMOTES BY PARAHEX X CODEX
 
 async def start_api_server():
