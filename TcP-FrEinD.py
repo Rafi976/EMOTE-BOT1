@@ -65,6 +65,22 @@ async def emote_api_handler(request):
         return web.json_response({'status': 'ok', 'message': f'Sent emote {emoteid} to {uids}'})
     except Exception as e:
         return web.json_response({'status': 'error', 'message': str(e)}, status=500)
+        
+        # ----------- LEAVE API (Correct Position) -----------
+async def leave_api_handler(request):
+    try:
+        if key is None or iv is None or region is None:
+            return web.json_response({'status': 'error', 'message': 'Bot not ready'}, status=503)
+
+        if whisper_writer is None or online_writer is None:
+            return web.json_response({'status': 'error', 'message': 'Bot not connected'}, status=503)
+
+        leave_packet = await ExiT(None, key, iv)
+        await SEndPacKeT(whisper_writer, online_writer, 'OnLine', leave_packet)
+
+        return web.json_response({'status': 'success', 'message': 'Bot Left Squad/Chat Successfully'})
+    except Exception as e:
+        return web.json_response({'status': 'error', 'message': str(e)}, status=500)
 
 #EMOTES BY PARAHEX X CODEX
 
@@ -73,6 +89,7 @@ async def start_api_server():
     app.router.add_get('/api', api_handler)
     # register the emote endpoint so /api/emote works
     app.router.add_get('/api/emote', emote_api_handler)
+    app.router.add_get('/api/leave', leave_api_handler)
 
     runner = web.AppRunner(app)
     await runner.setup()
